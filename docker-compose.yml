@@ -26,7 +26,8 @@ services:
     volumes:
       - ${QBT_CONFIG_PATH}:/config
       - ${QBT_DOWNLOADS_PATH}:/downloads
-    network_mode: "service:gluetun"
+    network_mode: 'service:gluetun'
+    restart: 'unless-stopped'
 
   gluetun:
     image: qmcgaw/gluetun
@@ -62,3 +63,4 @@ services:
       # Server list updater
       # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
       - UPDATER_PERIOD=
+    restart: 'unless-stopped'
