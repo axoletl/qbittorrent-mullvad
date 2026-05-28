@@ -1,0 +1,64 @@
+services:
+  qbittorrent-nox:
+    # for debugging
+    #cap_add:
+      #- SYS_PTRACE
+    # additional arguments to `qbittorrent-nox`
+    #command:
+      #- --help
+    container_name: qbittorrent-nox
+    environment:
+      #- PAGID=10000
+      #- PGID=1000
+      #- PUID=1000
+      - QBT_LEGAL_NOTICE=${QBT_LEGAL_NOTICE}
+      - QBT_VERSION=${QBT_VERSION}
+      - QBT_TORRENTING_PORT=${QBT_TORRENTING_PORT}
+      - QBT_WEBUI_PORT=${QBT_WEBUI_PORT}
+      #- TZ=UTC
+      #- UMASK=022
+    image: qbittorrentofficial/qbittorrent-nox:${QBT_VERSION}
+    read_only: true
+    stop_grace_period: 30m
+    tmpfs:
+      - /tmp
+    tty: true
+    volumes:
+      - ${QBT_CONFIG_PATH}:/config
+      - ${QBT_DOWNLOADS_PATH}:/downloads
+    network_mode: "service:gluetun"
+
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    # line above must be uncommented to allow external containers to connect.
+    # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/connect-a-container-to-gluetun.md#external-container-to-gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      # HTTP proxy
+      - 8888:8888/tcp
+      # Shadowsocks
+      - 8388:8388/tcp
+      - 8388:8388/udp
+      # for bittorrent traffic
+      - ${QBT_TORRENTING_PORT}:${QBT_TORRENTING_PORT}/tcp
+      - ${QBT_TORRENTING_PORT}:${QBT_TORRENTING_PORT}/udp
+      # for WebUI
+      - ${QBT_WEBUI_PORT}:${QBT_WEBUI_PORT}/tcp
+    volumes:
+      - ${GLUETUN_PATH}:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - SERVER_CITIES=${SERVER_CITIES}
+      # Timezone for accurate log times
+      - TZ=
+      # Server list updater
+      # See https://github.com/qdm12/gluetun-wiki/blob/main/setup/servers.md#update-the-vpn-servers-list
+      - UPDATER_PERIOD=
