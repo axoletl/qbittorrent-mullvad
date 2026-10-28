@@ -26,6 +26,7 @@ services:
     volumes:
       - ${QBT_CONFIG_PATH}:/config
       - ${QBT_DOWNLOADS_PATH}:/downloads
+      - ${QBT_MUSIC_PATH}:/music
     network_mode: 'service:gluetun'
     restart: 'unless-stopped'
 
