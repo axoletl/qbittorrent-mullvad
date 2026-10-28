@@ -52,12 +52,12 @@ services:
     volumes:
       - ${GLUETUN_PATH}:/gluetun
     environment:
-      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_SERVICE_PROVIDER=ivpn
       - VPN_TYPE=wireguard
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
-      - SERVER_CITIES=${SERVER_CITIES}
+      - COUNTRY=${SERVER_COUNTRIES}
+      - CITY=${SERVER_CITIES}
       # Timezone for accurate log times
       - TZ=
       # Server list updater
